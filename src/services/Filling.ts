@@ -11,9 +11,8 @@ db.transaction((tx) => {
   console.log('criada')
 });
 
-const create = (name: string) => {
+const create = (name: string) : Promise<FillingType> => {
   const UUID = Crypto.randomUUID();
-  console.log('Your UUID: ' + UUID);
 
   return new Promise((resolve, reject) => {
     db.transaction((tx) => {
@@ -23,7 +22,7 @@ const create = (name: string) => {
         [UUID, name],
         //-----------------------
         (_, { rowsAffected, insertId }) => {
-          if (rowsAffected > 0) {resolve('insertId')}
+          if (rowsAffected > 0) {resolve({ id: UUID, name: name })}
           else reject("Error inserting obj: " + JSON.stringify(name)); // insert falhou
         },
         (_, error) => {
