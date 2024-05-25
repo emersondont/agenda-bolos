@@ -1,4 +1,4 @@
 export type FillingType = {
-  id: number;
+  id: string;
   name: string;
 };

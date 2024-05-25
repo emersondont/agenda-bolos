@@ -1,24 +1,29 @@
 import { FillingType } from '../types';
 import db from './SQLIteDatabase';
+import * as Crypto from 'expo-crypto';
 
 db.transaction((tx) => {
   // tx.executeSql("DROP TABLE Fillings;");
   // console.log('apagando')
   tx.executeSql(
-    "CREATE TABLE IF NOT EXISTS Fillings (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT);"
+    "CREATE TABLE IF NOT EXISTS Fillings (id TEXT PRIMARY KEY, name TEXT);"
   );
+  console.log('criada')
 });
 
 const create = (name: string) => {
+  const UUID = Crypto.randomUUID();
+  console.log('Your UUID: ' + UUID);
+
   return new Promise((resolve, reject) => {
     db.transaction((tx) => {
       //comando SQL modificável
       tx.executeSql(
-        "INSERT INTO Fillings (name) values (?);",
-        [name],
+        "INSERT INTO Fillings (id, name) values (?,?);",
+        [UUID, name],
         //-----------------------
         (_, { rowsAffected, insertId }) => {
-          if (rowsAffected > 0) resolve(insertId);
+          if (rowsAffected > 0) {resolve('insertId')}
           else reject("Error inserting obj: " + JSON.stringify(name)); // insert falhou
         },
         (_, error) => {
@@ -49,7 +54,29 @@ const all = (): Promise<FillingType[]> => {
   });
 };
 
+const remove = (id: string) => {
+  return new Promise((resolve, reject) => {
+    db.transaction((tx) => {
+      //comando SQL modificável
+      tx.executeSql(
+        "DELETE FROM Fillings WHERE id=?;",
+        [id],
+        //-----------------------
+        (_, { rowsAffected }) => {
+          resolve(rowsAffected);
+        },
+        (_, error) => {
+          reject(error); // erro interno em tx.executeSql
+          return false; // Add this line to return a boolean value
+        }
+      );
+    });
+  });
+};
+
+
 export default {
   create,
-  all
+  all,
+  remove
 };
