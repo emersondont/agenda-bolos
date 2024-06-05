@@ -9,7 +9,7 @@ export default function TabRoutesLayout() {
       <Tabs.Screen 
         name='index'
         options={{
-          title: 'Home',
+          title: 'Início',
           tabBarIcon:({size, color}) => (
             <MaterialIcons name='home' size={size} color={color} />
           )
@@ -18,7 +18,7 @@ export default function TabRoutesLayout() {
       <Tabs.Screen 
         name='newCake'
         options={{
-          title: 'Cake',
+          title: 'Novo Bolo',
           tabBarIcon:({size, color}) => (
             <MaterialCommunityIcons name='cake' size={size} color={color} />
           )

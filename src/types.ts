@@ -1,3 +1,5 @@
+import { z } from "zod";
+
 export type FillingType = {
   id: string;
   name: string;
@@ -15,3 +17,17 @@ export type CakeType = {
   quantityBatters: number;
   description: string;
 };
+
+export const cakeSchema = z.object({
+  // id: z.string(),
+  customer: z.string().min(1),
+  price: z.coerce.number().min(0.01),
+  deliveryDate: z.coerce.date(),
+  deliveryHour: z.string().min(1),
+  fillings: z.string().min(1),
+  batter: z.string().min(1),
+  // quantityFillings: z.coerce.number(),
+  quantityBatters: z.coerce.number(),
+  description: z.string().optional(),
+})
+export type CakeSchema = z.infer<typeof cakeSchema>

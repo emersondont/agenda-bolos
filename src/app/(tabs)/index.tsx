@@ -1,11 +1,11 @@
-import { StyleSheet, Text, View, ScrollView, Pressable, Dimensions } from "react-native";
+import { useState } from "react";
+import { StyleSheet, ScrollView, Pressable } from "react-native";
 import { CakeType } from "../../types";
 import CakeCard from "../../components/cakeCard";
-import { ApplicationProvider, } from "@ui-kitten/components";
-import * as eva from '@eva-design/eva';
 import { Feather } from '@expo/vector-icons';
-import { useState } from "react";
 import Calendar from "../../components/calendar";
+import Layout, {stylesLayout} from "../../components/layout";
+import { Input, Text } from "@ui-kitten/components";
 // import Animated, { useAnimatedStyle, useSharedValue, withTiming, Easing } from "react-native-reanimated";
 
 const cakes: CakeType[] = [
@@ -111,40 +111,35 @@ export default function Home() {
   const [showCalendar, setShowCalendar] = useState(false);
   const [date, setDate] = useState(new Date());
   return (
-    <ApplicationProvider {...eva} theme={eva.light}>
-      <View style={styles.container}>
+    <Layout>
+      {showCalendar && (
+        <Calendar
+          date={date}
+          setDate={setDate}
+        />
+      )}
 
-        {
-          showCalendar && (
-            <Calendar
-              date={date}
-              setDate={setDate}
-            />
-          )
-        }
+      <Text style={stylesLayout.title}>Próximos bolos:</Text>
 
-        <Text style={styles.title}>Próximos bolos:</Text>
+      <ScrollView style={styles.main} showsVerticalScrollIndicator={false}>
+        {cakes.map((cake) =>
+          showCalendar ?
+            cake.deliveryDate.toDateString() === date.toDateString() ?
+              <CakeCard key={cake.id} cake={cake} /> : null
+            :
+            (
+              <CakeCard key={cake.id} cake={cake} />
+            ))}
+      </ScrollView>
 
-        <ScrollView style={styles.main} showsVerticalScrollIndicator={false}>
-          {cakes.map((cake) =>
-            showCalendar ?
-              cake.deliveryDate.toDateString() === date.toDateString() ?
-                <CakeCard key={cake.id} cake={cake} /> : null
-              :
-              (
-                <CakeCard key={cake.id} cake={cake} />
-              ))}
-        </ScrollView>
+      <Pressable
+        style={styles.button}
+        onPress={() => setShowCalendar(!showCalendar)}
+      >
+        <Feather name="calendar" size={32} color={'#fff'} />
+      </Pressable>
 
-        <Pressable
-          style={styles.button}
-          onPress={() => setShowCalendar(!showCalendar)}
-        >
-          <Feather name="calendar" size={32} color={'#fff'} />
-        </Pressable>
-
-      </View>
-    </ApplicationProvider>
+    </Layout>
   );
 }
 
@@ -157,12 +152,6 @@ const styles = StyleSheet.create({
   },
   main: {
     flex: 1,
-    width: "100%",
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: "bold",
-    marginBottom: 12,
     width: "100%",
   },
   subtitle: {

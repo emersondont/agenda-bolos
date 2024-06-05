@@ -25,6 +25,7 @@ const i18n: I18nConfig = {
     ],
   },
 };
+export const localeDateService = new NativeDateService('pt-br', { i18n, startDayOfWeek: 0 });
 
 interface Props {
   date: Date;
@@ -33,8 +34,7 @@ interface Props {
 
 export default function Calendar_(props: Props) {
   const [date, setDate] = useState(new Date());
-  const localeDateService = new NativeDateService('pt-br', { i18n, startDayOfWeek: 0 });
-
+  
   return (
     <Calendar
       dateService={localeDateService}
