@@ -15,7 +15,7 @@ export type CakeType = {
   batter: string;
   quantityFillings: number;
   quantityBatters: number;
-  description: string;
+  description?: string;
 };
 
 export const cakeSchema = z.object({

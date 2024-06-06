@@ -1,32 +1,42 @@
 import { StyleSheet, View, ScrollView } from "react-native";
-import Layout, { stylesLayout } from "../../components/layout";
-import { Text, Button, } from "@ui-kitten/components";
+import Layout from "../../components/layout";
+import { Text } from "@ui-kitten/components";
 import CustomInput from "../../components/ui/form/customInput";
 import DeliveryDatePicker from "../../components/ui/form/deliveryDatePicker";
 import DeliveryTimePicker from "../../components/ui/form/deliveryTimePicker";
 import FillingsSelector from "../../components/ui/form/fillingsSelector";
 import BatterSelector from "../../components/ui/form/batterSelector";
 import BatterQuantitySelector from "../../components/ui/form/batterQuantitySelector";
-import ButtonSubmit from "../../components/ui/form/buttonSubmit";
+import ButtonSubmit, { progress } from "../../components/ui/form/buttonSubmit";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { CakeSchema, cakeSchema } from "../../types";
 import { zodResolver } from '@hookform/resolvers/zod'
+import Cake from "../../services/Cake";
+import { useState } from "react";
 
 export default function NewCake() {
-  const { register, control, handleSubmit, setError, formState: { errors }, getValues } = useForm<CakeSchema>({
+  const [progressStatus, setProgressStatus] = useState<progress>('default')
+  const { control, handleSubmit, setError, formState: { errors } } = useForm<CakeSchema>({
     resolver: zodResolver(cakeSchema)
   })
 
   const handleNewCake: SubmitHandler<CakeSchema> = async (data) => {
-    
+    const quantityFillings = data.fillings.split(';').length;
+
+    try {
+      const res = await Cake.create({ ...data, quantityFillings })
+      setProgressStatus('success')
+    } catch (error) {
+      setError("root", { message: String(error) })
+    }
   }
   const onError = () => {
-    console.log(errors)
+    setProgressStatus('error')
   }
 
   return (
     <Layout>
-      <Text style={stylesLayout.title}>Agendar encomenta</Text>
+      <Text category="h4" style={{marginBottom: 12}}>Agendar encomenta</Text>
 
       <ScrollView style={styles.main} showsVerticalScrollIndicator={false}>
         <CustomInput
@@ -69,7 +79,7 @@ export default function NewCake() {
             name="batter"
             error={errors.batter}
           />
-          <BatterQuantitySelector 
+          <BatterQuantitySelector
             control={control}
             name="quantityBatters"
             error={errors.quantityBatters}
@@ -83,7 +93,12 @@ export default function NewCake() {
           error={undefined}
         />
 
-        <ButtonSubmit handleSubmit={handleSubmit(handleNewCake, onError)} errors={errors}/>
+        <ButtonSubmit
+          handleSubmit={handleSubmit(handleNewCake, onError)}
+          errors={errors}
+          progressStatus={progressStatus}
+          setProgressStatus={setProgressStatus}
+        />
 
       </ScrollView>
     </Layout>

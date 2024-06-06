@@ -1,15 +1,16 @@
 import { Button, Spinner } from "@ui-kitten/components";
-import { useState } from "react";
 import { GestureResponderEvent } from "react-native";
 import { Feather } from '@expo/vector-icons';
 import { MaterialIcons } from '@expo/vector-icons';
-import { FieldErrors } from "react-hook-form";
+import { FieldErrors, UseFormReset } from "react-hook-form";
 
-type progress = 'loading' | 'success' | 'error' | 'default'
+export type progress = 'loading' | 'success' | 'error' | 'default'
 
 interface Props extends React.ComponentProps<typeof Button> {
   handleSubmit: () => void
   errors: FieldErrors
+  progressStatus: progress
+  setProgressStatus: (status: progress) => void
 }
 
 const LoadingIndicator = (): React.ReactElement => (
@@ -23,21 +24,15 @@ const LoadingIndicatorError = (): React.ReactElement => (
 );
 
 export default function ButtonSubmit(props: Props) {
-  const [progressStatus, setProgressStatus] = useState<progress>('default')
+  // const [progressStatus, setProgressStatus] = useState<progress>('default')
 
   const handleSubmit = async (event: GestureResponderEvent) => {
-    setProgressStatus('loading')
+    props.setProgressStatus('loading')
 
     await new Promise<void>(resolve => setTimeout(async () => {
       await props.handleSubmit()
       resolve()
     }, 400))
-
-    if (Object.keys(props.errors).length !== 0) {
-      setProgressStatus('error')
-    } else {
-      setProgressStatus('success')
-    }
   }
 
   return (
@@ -48,7 +43,7 @@ export default function ButtonSubmit(props: Props) {
       }}
       onPress={handleSubmit}
       accessoryRight={(() => {
-        switch (progressStatus) {
+        switch (props.progressStatus) {
           case 'loading':
             return LoadingIndicator;
           case 'success':
@@ -60,7 +55,7 @@ export default function ButtonSubmit(props: Props) {
         }
       })()}
       status={(() => {
-        switch (progressStatus) {
+        switch (props.progressStatus) {
           case 'loading':
             return 'primary';
           case 'success':
@@ -73,7 +68,7 @@ export default function ButtonSubmit(props: Props) {
       })()}
       {...props}
     >
-      {progressStatus === 'success' ? 'SALVO' : 'SALVAR'}
+      {props.progressStatus === 'success' ? 'SALVO' : 'SALVAR'}
     </Button>
   )
 

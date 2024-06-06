@@ -1,140 +1,66 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { StyleSheet, ScrollView, Pressable } from "react-native";
 import { CakeType } from "../../types";
 import CakeCard from "../../components/cakeCard";
 import { Feather } from '@expo/vector-icons';
 import Calendar from "../../components/calendar";
-import Layout, {stylesLayout} from "../../components/layout";
-import { Input, Text } from "@ui-kitten/components";
-// import Animated, { useAnimatedStyle, useSharedValue, withTiming, Easing } from "react-native-reanimated";
-
-const cakes: CakeType[] = [
-  {
-    id: '1',
-    customer: 'Customer 1',
-    price: 50,
-    deliveryDate: new Date(),
-    deliveryHour: 'morning',
-    fillings: 'filling 1;filling 2',
-    batter: 'batter 1',
-    quantityFillings: 2,
-    quantityBatters: 1,
-    description: 'Cake 1 description',
-  },
-  {
-    id: '2',
-    customer: 'Customer 2',
-    price: 75,
-    deliveryDate: new Date(),
-    deliveryHour: 'afternoon',
-    fillings: 'filling 2;filling 3',
-    batter: 'batter 2',
-    quantityFillings: 3,
-    quantityBatters: 2,
-    description: 'Cake 2 description',
-  },
-  {
-    id: '3',
-    customer: 'Customer 3',
-    price: 100,
-    deliveryDate: new Date('2024-06-03'),
-    deliveryHour: 'night',
-    fillings: 'filling 1;filling 3',
-    batter: 'batter 3',
-    quantityFillings: 1,
-    quantityBatters: 3,
-    description: 'Cake 3 description',
-  },
-  {
-    id: '4',
-    customer: 'Customer 4',
-    price: 125,
-    deliveryDate: new Date(),
-    deliveryHour: 'morning',
-    fillings: 'filling 2;filling 3',
-    batter: 'batter 1',
-    quantityFillings: 2,
-    quantityBatters: 1,
-    description: 'Cake 4 description',
-  },
-  {
-    id: '5',
-    customer: 'Customer 5',
-    price: 150,
-    deliveryDate: new Date(),
-    deliveryHour: 'afternoon',
-    fillings: 'filling 1;filling 2',
-    batter: 'batter 2',
-    quantityFillings: 3,
-    quantityBatters: 2,
-    description: 'Cake 5 description',
-  },
-  {
-    id: '6',
-    customer: 'Customer 6',
-    price: 175,
-    deliveryDate: new Date(),
-    deliveryHour: 'night',
-    fillings: 'filling 2;filling 3',
-    batter: 'batter 3',
-    quantityFillings: 1,
-    quantityBatters: 3,
-    description: 'Cake 6 description',
-  },
-  {
-    id: '7',
-    customer: 'Customer 7',
-    price: 200,
-    deliveryDate: new Date(),
-    deliveryHour: 'morning',
-    fillings: 'filling 1;filling 2',
-    batter: 'batter 1',
-    quantityFillings: 2,
-    quantityBatters: 1,
-    description: 'Cake 7 description',
-  },
-  {
-    id: '8',
-    customer: 'Customer 8',
-    price: 225,
-    deliveryDate: new Date(),
-    deliveryHour: 'afternoon',
-    fillings: 'filling 2;filling 3',
-    batter: 'batter 2',
-    quantityFillings: 3,
-    quantityBatters: 2,
-    description: 'Cake 8 description',
-  },
-];
+import Layout from "../../components/layout";
+import { Text } from "@ui-kitten/components";
+import Cake from "../../services/Cake";
 
 export default function Home() {
   const [showCalendar, setShowCalendar] = useState(false);
   const [date, setDate] = useState(new Date());
+  const [cakes, setCakes] = useState<CakeType[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const handleOpenCalendar = () => {
+    setIsLoading(!showCalendar)
+    setShowCalendar(!showCalendar);
+  }
+
+  useEffect(() => {
+    const fetchCakes = async () => {
+      try {
+        const res = await Cake.all();
+        setCakes(res);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    fetchCakes();
+  }, []);
+
   return (
     <Layout>
       {showCalendar && (
         <Calendar
           date={date}
           setDate={setDate}
+          isLoading={isLoading}
+          setIsLoading={setIsLoading}
         />
       )}
 
-      <Text style={stylesLayout.title}>Próximos bolos:</Text>
+      <Text category="h4" style={{ marginBottom: 12 }}>Próximos bolos:</Text>
 
-      <ScrollView style={styles.main} showsVerticalScrollIndicator={false}>
+      <ScrollView style={styles.main} showsVerticalScrollIndicator={false} key={cakes.length + (showCalendar ? 1 : 0)}>
         {cakes.map((cake) =>
           showCalendar ?
-            cake.deliveryDate.toDateString() === date.toDateString() ?
-              <CakeCard key={cake.id} cake={cake} /> : null
+            new Date(cake.deliveryDate).toDateString() === date.toDateString() ?
+              <CakeCard key={cake.id} cake={cake} isLoading={isLoading} />
+              : null
             :
             (
-              <CakeCard key={cake.id} cake={cake} />
-            ))}
+              <CakeCard key={cake.id} cake={cake} isLoading={isLoading} />
+            ))
+        }
       </ScrollView>
 
       <Pressable
         style={styles.button}
-        onPress={() => setShowCalendar(!showCalendar)}
+        onPress={handleOpenCalendar}
       >
         <Feather name="calendar" size={32} color={'#fff'} />
       </Pressable>
@@ -153,6 +79,7 @@ const styles = StyleSheet.create({
   main: {
     flex: 1,
     width: "100%",
+
   },
   subtitle: {
     fontSize: 36,

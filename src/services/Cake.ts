@@ -19,17 +19,19 @@ db.transaction((tx) => {
       description TEXT
     )`
   );
-  console.log('criada')
+  // console.log('criada')
 });
 
 const create = (cake: Omit<CakeType, "id">) : Promise<CakeType> => {
   const UUID = Crypto.randomUUID();
-
+  var description = ''
+  if(cake.description)
+    description = cake.description
   return new Promise((resolve, reject) => {
     db.transaction((tx) => {
       tx.executeSql(
         "INSERT INTO Cakes (id, customer, price, deliveryDate, deliveryHour, fillings, batter, quantityFillings, quantityBatters, description) values (?,?,?,?,?,?,?,?,?,?);",
-        [UUID, cake.customer, cake.price, cake.deliveryDate.toDateString(), cake.deliveryHour, cake.fillings, cake.batter, cake.quantityFillings, cake.quantityBatters, cake.description],
+        [UUID, cake.customer, cake.price, cake.deliveryDate.toDateString(), cake.deliveryHour, cake.fillings, cake.batter, cake.quantityFillings, cake.quantityBatters, description],
         (_, { rowsAffected }) => {
           if (rowsAffected > 0) {resolve({id: UUID, ...cake})}
           else reject("Error inserting obj: " + JSON.stringify(cake));
@@ -45,11 +47,14 @@ const create = (cake: Omit<CakeType, "id">) : Promise<CakeType> => {
 };
 
 const update = (cake: CakeType) : Promise<CakeType>  => {
+  var description = ''
+  if(cake.description)
+    description = cake.description
   return new Promise((resolve, reject) => {
     db.transaction((tx) => {
       tx.executeSql(
         "UPDATE Cakes SET customer=?, price=?, deliveryDate=?, deliveryHour=?, fillings=?, batter=?, quantityFillings=?, quantityBatters=?, description=? WHERE id=?;",
-        [cake.customer, cake.price, cake.deliveryDate.toDateString(), cake.deliveryHour, cake.fillings, cake.batter, cake.quantityFillings, cake.quantityBatters, cake.description, cake.id],
+        [cake.customer, cake.price, cake.deliveryDate.toDateString(), cake.deliveryHour, cake.fillings, cake.batter, cake.quantityFillings, cake.quantityBatters, description, cake.id],
         (_, { rowsAffected }) => {
           if (rowsAffected > 0) resolve(cake);
           else reject("Error updating obj: id=" + cake.id);
@@ -80,6 +85,23 @@ const all = (): Promise<CakeType[]> => {
   });
 };
 
+const getByMonth = (month: number, year: number): Promise<CakeType[]> => {
+  const monthStr = `${year}-${month < 10 ? `0${month}`: month}` 
+  return new Promise((resolve, reject) => {
+    db.transaction((tx) => {
+      tx.executeSql(
+        "SELECT deliveryDate FROM Cakes WHERE strftime('%Y-%m', deliveryDate=?);",
+        [monthStr],
+        (_, { rows }) => resolve(rows._array),
+        (_, error) => {
+          reject(error);
+          return false;
+        }
+      );
+    });
+  });
+}
+
 const remove = (id: string) => {
   return new Promise((resolve, reject) => {
     db.transaction((tx) => {
@@ -102,5 +124,6 @@ export default {
   create,
   update,
   all,
+  getByMonth,
   remove
 };

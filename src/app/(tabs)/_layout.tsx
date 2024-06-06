@@ -5,7 +5,7 @@ import { FontAwesome5 } from '@expo/vector-icons';
 
 export default function TabRoutesLayout() {
   return (
-    <Tabs screenOptions={{headerShown: false}}>
+    <Tabs screenOptions={{headerShown: false, tabBarHideOnKeyboard: true}}>
       <Tabs.Screen 
         name='index'
         options={{
@@ -19,6 +19,7 @@ export default function TabRoutesLayout() {
         name='newCake'
         options={{
           title: 'Novo Bolo',
+          unmountOnBlur: true,
           tabBarIcon:({size, color}) => (
             <MaterialCommunityIcons name='cake' size={size} color={color} />
           )
