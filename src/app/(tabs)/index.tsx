@@ -6,13 +6,14 @@ import { Feather } from '@expo/vector-icons';
 import Calendar from "../../components/calendar";
 import Layout from "../../components/layout";
 import { Text } from "@ui-kitten/components";
-import Cake from "../../services/Cake";
+import { useCakeDatabase } from "../../database/useCakeDatabase";
 
 export default function Home() {
   const [showCalendar, setShowCalendar] = useState(false);
   const [date, setDate] = useState(new Date());
   const [cakes, setCakes] = useState<CakeType[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const cakeDatabase = useCakeDatabase()
 
   const handleOpenCalendar = () => {
     setIsLoading(!showCalendar)
@@ -22,7 +23,7 @@ export default function Home() {
   useEffect(() => {
     const fetchCakes = async () => {
       try {
-        const res = await Cake.all();
+        const res = await cakeDatabase.all()
         setCakes(res);
       } catch (error) {
         console.log(error);

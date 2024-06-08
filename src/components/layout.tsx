@@ -20,7 +20,7 @@ export const stylesLayout = StyleSheet.create({
   container: {
     flex: 1,
     paddingHorizontal: 24,
-    paddingTop: 24,
+    paddingTop: 48,
     width: "100%",
     backgroundColor: "#fff",
   },

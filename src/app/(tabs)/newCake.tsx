@@ -10,21 +10,22 @@ import BatterQuantitySelector from "../../components/ui/form/batterQuantitySelec
 import ButtonSubmit, { progress } from "../../components/ui/form/buttonSubmit";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { CakeSchema, cakeSchema } from "../../types";
-import { zodResolver } from '@hookform/resolvers/zod'
-import Cake from "../../services/Cake";
+import { zodResolver } from '@hookform/resolvers/zod';
 import { useState } from "react";
+import { useCakeDatabase } from "../../database/useCakeDatabase";
 
 export default function NewCake() {
   const [progressStatus, setProgressStatus] = useState<progress>('default')
   const { control, handleSubmit, setError, formState: { errors } } = useForm<CakeSchema>({
     resolver: zodResolver(cakeSchema)
   })
+  const cakeDatabase = useCakeDatabase()
 
   const handleNewCake: SubmitHandler<CakeSchema> = async (data) => {
     const quantityFillings = data.fillings.split(';').length;
 
     try {
-      const res = await Cake.create({ ...data, quantityFillings })
+      const res = await cakeDatabase.create({ ...data, quantityFillings })
       setProgressStatus('success')
     } catch (error) {
       setError("root", { message: String(error) })
