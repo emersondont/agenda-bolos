@@ -3,22 +3,14 @@ import { StyleSheet, ScrollView, Pressable } from "react-native";
 import { CakeType } from "../../types";
 import CakeCard from "../../components/cakeCard";
 import { Feather } from '@expo/vector-icons';
-import Calendar from "../../components/calendar";
 import Layout from "../../components/layout";
 import { Text } from "@ui-kitten/components";
 import { useCakeDatabase } from "../../database/useCakeDatabase";
+import { Link } from 'expo-router';
 
 export default function Home() {
-  const [showCalendar, setShowCalendar] = useState(false);
-  const [date, setDate] = useState(new Date());
   const [cakes, setCakes] = useState<CakeType[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
   const cakeDatabase = useCakeDatabase()
-
-  const handleOpenCalendar = () => {
-    setIsLoading(!showCalendar)
-    setShowCalendar(!showCalendar);
-  }
 
   useEffect(() => {
     const fetchCakes = async () => {
@@ -35,57 +27,27 @@ export default function Home() {
 
   return (
     <Layout>
-      {showCalendar && (
-        <Calendar
-          date={date}
-          setDate={setDate}
-          isLoading={isLoading}
-          setIsLoading={setIsLoading}
-        />
-      )}
-
       <Text category="h4" style={{ marginBottom: 12 }}>Próximos bolos:</Text>
 
-      <ScrollView style={styles.main} showsVerticalScrollIndicator={false} key={cakes.length + (showCalendar ? 1 : 0)}>
+      <ScrollView
+        style={{ flex: 1, width: "100%" }}
+        showsVerticalScrollIndicator={false}
+      >
         {cakes.map((cake) =>
-          showCalendar ?
-            new Date(cake.deliveryDate).toDateString() === date.toDateString() ?
-              <CakeCard key={cake.id} cake={cake} isLoading={isLoading} />
-              : null
-            :
-            (
-              <CakeCard key={cake.id} cake={cake} isLoading={isLoading} />
-            ))
-        }
+          <CakeCard key={cake.id} cake={cake} />
+        )}
       </ScrollView>
 
-      <Pressable
-        style={styles.button}
-        onPress={handleOpenCalendar}
-      >
-        <Feather name="calendar" size={32} color={'#fff'} />
+      <Pressable style={styles.button}>
+        <Link href="/calendarPage">
+          <Feather name="calendar" size={32} color={'#fff'} />
+        </Link>
       </Pressable>
-
     </Layout>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    paddingHorizontal: 24,
-    paddingTop: 24,
-    width: "100%",
-  },
-  main: {
-    flex: 1,
-    width: "100%",
-
-  },
-  subtitle: {
-    fontSize: 36,
-    color: "#38434D",
-  },
   button: {
     borderRadius: 12,
     backgroundColor: "#007aff",

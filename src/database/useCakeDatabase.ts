@@ -21,7 +21,7 @@ export function useCakeDatabase() {
         $id: UUID,
         $customer: cake.customer,
         $price: cake.price,
-        $deliveryDate: cake.deliveryDate.toDateString(),
+        $deliveryDate: cake.deliveryDate.toISOString(),
         $deliveryHour: cake.deliveryHour,
         $fillings: cake.fillings,
         $batter: cake.batter,
@@ -86,8 +86,8 @@ export function useCakeDatabase() {
   async function getByMonth(month: number, year: number){
     const monthStr = `${year}-${month < 10 ? `0${month}` : month}`;
     try {
-      const query = `SELECT deliveryDate FROM Cakes WHERE strftime('%Y-%m', deliveryDate) = ?;`;
-      const result = await database.getAllAsync<CakeType>(query, `%${monthStr}%`);
+      const query = `SELECT * FROM Cakes WHERE strftime('%Y-%m', deliveryDate) = ?;`;
+      const result = await database.getAllAsync<CakeType>(query, [monthStr]);
       return result;
     } catch (error) {
       throw error;

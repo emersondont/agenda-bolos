@@ -7,12 +7,11 @@ import Animated, { FadeIn } from 'react-native-reanimated';
 
 interface Props {
   cake: CakeType
-  isLoading: boolean
 }
 
 export default function CakeCard(props: Props) {
   return (
-    <Animated.View entering={FadeIn.duration(200).delay(props.isLoading ? 400 : 0)}>
+    <Animated.View entering={FadeIn.duration(200)}>
       <Card style={{ marginBottom: 12 }} status='primary'>
         <Text category='h5'>{props.cake.customer}</Text>
         <View style={styles.view}>

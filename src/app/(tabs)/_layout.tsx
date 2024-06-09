@@ -45,6 +45,14 @@ export default function TabRoutesLayout() {
         }}
       />
 
+      <Tabs.Screen 
+        name='calendarPage'
+        options={{
+          // unmountOnBlur: true,
+          href: null
+        }}
+      />
+
     </Tabs>
   )
 }

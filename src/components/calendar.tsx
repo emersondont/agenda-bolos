@@ -1,10 +1,8 @@
-import { StyleSheet, TouchableOpacity, View } from "react-native";
-import { Calendar, I18nConfig, NativeDateService, StyleType, Text, CircularProgressBar, ProgressBar } from "@ui-kitten/components";
+import { StyleSheet, TouchableOpacity } from "react-native";
+import { Calendar, I18nConfig, NativeDateService, StyleType, Text } from "@ui-kitten/components";
 import { CalendarDateInfo } from "@ui-kitten/components/ui/calendar/type";
-import Cake from "../services/Cake";
-import { useEffect, useState } from "react";
-import { CakeType } from "../types";
 import Animated, { FadeInUp } from 'react-native-reanimated';
+import { CakeType } from "../types";
 
 const i18n: I18nConfig = {
   dayNames: {
@@ -34,21 +32,18 @@ export const localeDateService = new NativeDateService('pt-br', { i18n, startDay
 interface Props {
   date: Date;
   setDate: (date: Date) => void;
-  isLoading: boolean;
-  setIsLoading: (loading: boolean) => void;
+  fetchCakes: (date: Date) => void;
+  cakes: CakeType[];
 }
 
 export default function Calendar_(props: Props) {
-  const [listArr, setListArr] = useState<CakeType[]>([])
-  // const [isLoading, setIsLoading] = useState(true);
 
   const renderDay = (
     info: CalendarDateInfo<Date>,
     style: StyleType
   ): React.ReactElement => {
-    const count = listArr.filter((cake) =>
-      new Date(cake.deliveryDate).getDate() == info.date.getDate() &&
-      new Date(cake.deliveryDate).getMonth() == info.date.getMonth()
+    const count = props.cakes.filter((cake) =>
+      String(cake.deliveryDate).split('T')[0] === info.date.toISOString().split('T')[0]
     ).length;
 
     return (
@@ -64,42 +59,16 @@ export default function Calendar_(props: Props) {
     )
   }
 
-  useEffect(() => {
-    const fetchCakes = async () => {
-      try {
-        const res = await Cake.getByMonth(props.date.getMonth() + 1, props.date.getFullYear());
-        setListArr(res)
-        props.setIsLoading(false);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    fetchCakes();
-  }, []);
-
-  if (props.isLoading) {
-    return (
-      <Animated.View entering={FadeInUp.duration(400)} style={{ height: '50%' }} >
-        <View style={{ height: '100%', justifyContent: 'center', alignItems: 'center' }}>
-          <CircularProgressBar
-            progress={400}
-            size="large"
-            status="primary"
-          />
-          <Text status="primary" category="h6">Carregando...</Text>
-        </View>
-      </Animated.View>
-    )
-  }
-
   return (
-    <Calendar
-      dateService={localeDateService}
-      date={props.date}
-      onSelect={nextDate => props.setDate(nextDate)}
-      style={styles.calendar}
-      renderDay={renderDay}
-    />
+    <Animated.View entering={FadeInUp.duration(400)}>
+      <Calendar
+        dateService={localeDateService}
+        date={props.date}
+        style={styles.calendar}
+        onVisibleDateChange={props.fetchCakes}
+        renderDay={renderDay}
+      />
+    </Animated.View>
   );
 }
 
