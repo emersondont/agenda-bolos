@@ -25,7 +25,7 @@ export default function NewCake() {
     const quantityFillings = data.fillings.split(';').length;
 
     try {
-      const res = await cakeDatabase.create({ ...data, quantityFillings })
+      await cakeDatabase.create({ ...data, quantityFillings })
       setProgressStatus('success')
     } catch (error) {
       setError("root", { message: String(error) })

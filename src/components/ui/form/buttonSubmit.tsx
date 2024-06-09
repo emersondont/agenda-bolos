@@ -63,7 +63,7 @@ export default function ButtonSubmit(props: Props) {
           case 'error':
             return 'danger';
           default:
-            return undefined;
+            return 'primary';
         }
       })()}
       {...props}
@@ -71,6 +71,5 @@ export default function ButtonSubmit(props: Props) {
       {props.progressStatus === 'success' ? 'SALVO' : 'SALVAR'}
     </Button>
   )
-
 }
 

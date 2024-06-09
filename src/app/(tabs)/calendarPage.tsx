@@ -5,7 +5,6 @@ import { CakeType } from "../../types";
 import { useCakeDatabase } from "../../database/useCakeDatabase";
 import { ScrollView } from "react-native";
 import CakeCard from "../../components/cakeCard";
-import { Text } from "@ui-kitten/components";
 
 export default function CalendarPage() {
   const [date, setDate] = useState(new Date());
