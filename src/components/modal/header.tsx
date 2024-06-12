@@ -4,7 +4,7 @@ import { AntDesign } from '@expo/vector-icons';
 
 interface Props {
   title: string
-  setVisibility: (visible: boolean) => void
+  handleClose: () => void
 }
 
 const CloseIcon = (props: IconProps): IconElement => (
@@ -20,7 +20,7 @@ export default function Header(props: Props & ViewProps) {
       <Button
         accessoryRight={CloseIcon}
         appearance='ghost'
-        onPress={() => props.setVisibility(false)}
+        onPress={props.handleClose}
       />
     </View>
   );

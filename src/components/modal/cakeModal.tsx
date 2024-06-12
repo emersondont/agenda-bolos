@@ -1,13 +1,14 @@
 import { Card, Modal } from "@ui-kitten/components";
 import { CakeSchema, CakeType, cakeSchema } from "../../types";
-import { useForm } from "react-hook-form";
+import { SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import CakeForm from "../ui/form/cakeForm";
+import CakeForm from "../forms/cake/cakeForm";
 import { useState } from "react";
 import Header from "./header";
 import Footer from "./footer";
 import { useCakeDatabase } from "../../database/useCakeDatabase";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { Progress } from "../forms/buttonSubmit";
 
 interface Props {
   cake: CakeType
@@ -17,8 +18,9 @@ interface Props {
 
 export default function CakeModal(props: Props) {
   const [disabled, setDisabled] = useState(true)
+  const [progressStatus, setProgressStatus] = useState<Progress>('default')
   const cakeDatabase = useCakeDatabase()
-  const { control, handleSubmit, setError, formState: { errors } } = useForm<CakeSchema>({
+  const { control, handleSubmit, setError, reset, formState: { errors } } = useForm<CakeSchema>({
     resolver: zodResolver(cakeSchema),
     defaultValues: {
       ...props.cake,
@@ -34,6 +36,19 @@ export default function CakeModal(props: Props) {
       })
     }
   })
+  const { mutateAsync: updateCakeFn } = useMutation({
+    mutationFn: cakeDatabase.update,
+    onSuccess(data, variables) {
+      queryClient.setQueryData(["cakes"], (cakes: CakeType[]) => {
+        return cakes.map(cake => {
+          if (cake.id === variables.id) {
+            return data
+          }
+          return cake
+        })
+      })
+    }
+  })
 
   const handleDelete = async () => {
     try {
@@ -44,15 +59,47 @@ export default function CakeModal(props: Props) {
     }
   }
 
+  const handleUpdate: SubmitHandler<CakeSchema> = async (data) => {
+    const quantityFillings = data.fillings.split(';').length;
+    try {
+      await updateCakeFn({ ...data, quantityFillings, id: props.cake.id })
+      setProgressStatus('success')
+    } catch (error) {
+      setError("root", { message: String(error) })
+    }
+  }
+  const onError = () => {
+    setProgressStatus('error')
+  }
+
+  const handleClose = () => {
+    props.setVisible(false)
+    setDisabled(true)
+    setProgressStatus('default')
+    reset()
+  }
+
   return (
     <Modal
       visible={props.visible}
       backdropStyle={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}
-      onBackdropPress={() => props.setVisible(false)}
+      onBackdropPress={handleClose}
+      animationType='fade'
     >
       <Card
-        header={<Header title="Detalhes da Encomenda" setVisibility={props.setVisible}/>}
-        footer={<Footer setDisabled={setDisabled} errors={errors} handleDelete={handleDelete}/>}
+        header={<Header
+          title="Detalhes da Encomenda"
+          handleClose={handleClose}
+        />}
+        footer={<Footer
+          setDisabled={setDisabled}
+          errors={errors}
+          handleDelete={handleDelete}
+          handleUpdate={handleSubmit(handleUpdate, onError)}
+          progressStatus={progressStatus}
+          setProgressStatus={setProgressStatus}
+          reset={reset}
+        />}
       >
         <CakeForm control={control} errors={errors} disabled={disabled} />
       </Card>

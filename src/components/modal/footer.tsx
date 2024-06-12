@@ -1,19 +1,21 @@
-import { Card, Modal, Text, Button } from "@ui-kitten/components";
-import { useState } from "react";
 import { View, ViewProps, StyleSheet } from "react-native";
-import ButtonSubmit, { Progress } from "../ui/form/buttonSubmit";
+import { Button } from "@ui-kitten/components";
 import { FieldErrors } from "react-hook-form";
+import { useState } from "react";
+import ButtonSubmit, { Progress } from "../forms/buttonSubmit";
 
 interface Props {
   setDisabled: (visible: boolean) => void;
   errors: FieldErrors;
   handleDelete: () => void;
+  handleUpdate: () => void;
+  progressStatus: Progress;
+  setProgressStatus: (status: Progress) => void;
+  reset: () => void;
 }
 
 export default function Footer(props: Props & ViewProps) {
   const [isEditing, setIsEditing] = useState(false)
-  const [progressStatus, setProgressStatus] = useState<Progress>('default')
-
 
   const handleEdit = () => {
     setIsEditing(true)
@@ -23,15 +25,13 @@ export default function Footer(props: Props & ViewProps) {
   const handleCancel = () => {
     setIsEditing(false)
     props.setDisabled(true)
+    props.setProgressStatus('default')
+    props.reset()
   }
 
-  const handleSubmit = async () => {
-    setProgressStatus('success')
+  const handleDelete = () => {
+    props.handleDelete()
   }
-
-  // const handleDelete = () => {
-  //   props.handleDelete()
-  // }
 
   return (
     <View
@@ -48,10 +48,10 @@ export default function Footer(props: Props & ViewProps) {
               Cancelar
             </Button>
             <ButtonSubmit
-              handleSubmit={handleSubmit}
+              handleSubmit={props.handleUpdate}
               errors={props.errors}
-              progressStatus={progressStatus}
-              setProgressStatus={setProgressStatus}
+              progressStatus={props.progressStatus}
+              setProgressStatus={props.setProgressStatus}
               style={styles.button}
             />
           </>
@@ -67,7 +67,7 @@ export default function Footer(props: Props & ViewProps) {
             <Button
               style={styles.button}
               status='danger'
-              onPress={props.handleDelete}
+              onPress={handleDelete}
             >
               Apagar
             </Button>

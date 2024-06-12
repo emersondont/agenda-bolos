@@ -1,9 +1,9 @@
 import { ScrollView, View, StyleSheet } from "react-native";
-import { Control, FieldErrors, DefaultValues } from "react-hook-form";
+import { Control, FieldErrors } from "react-hook-form";
 import { Text } from "@ui-kitten/components";
 import { CakeSchema } from "../../../types";
-import CustomInput from "./customInput";
-import DeliveryDatePicker from "./deliveryDatePicker";
+import CustomInput from "../customInput";
+import DatePicker from "../datePicker";
 import DeliveryTimePicker from "./deliveryTimePicker";
 import FillingsSelector from "./fillingsSelector";
 import BatterSelector from "./batterSelector";
@@ -36,11 +36,12 @@ export default function CakeForm({ control, errors, disabled }: Props) {
       />
 
       <View style={styles.div}>
-        <DeliveryDatePicker
+        <DatePicker
           control={control}
           name="deliveryDate"
           error={errors.deliveryDate}
           disabled={disabled}
+          labelText="Data de Entrega"
         />
         <DeliveryTimePicker
           control={control}

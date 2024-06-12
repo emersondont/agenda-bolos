@@ -1,18 +1,19 @@
 import Layout from "../../components/layout";
 import { Text } from "@ui-kitten/components";
-import ButtonSubmit, { Progress } from "../../components/ui/form/buttonSubmit";
+import ButtonSubmit, { Progress } from "../../components/forms/buttonSubmit";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { CakeSchema, CakeType, cakeSchema } from "../../types";
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useState } from "react";
 import { useCakeDatabase } from "../../database/useCakeDatabase";
-import CakeForm from "../../components/ui/form/cakeForm";
+import CakeForm from "../../components/forms/cake/cakeForm";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 export default function NewCake() {
   const [progressStatus, setProgressStatus] = useState<Progress>('default')
-  const { control, handleSubmit, setError, formState: { errors } } = useForm<CakeSchema>({
-    resolver: zodResolver(cakeSchema)
+  const { control, handleSubmit, setError, reset, formState: { errors } } = useForm<CakeSchema>({
+    resolver: zodResolver(cakeSchema),
+    defaultValues: {}
   }) 
   const cakeDatabase = useCakeDatabase()
   const queryClient = useQueryClient()
@@ -33,6 +34,7 @@ export default function NewCake() {
     try {
       await createCakeFn({ ...data, quantityFillings })
       setProgressStatus('success')
+      reset() 
     } catch (error) {
       setError("root", { message: String(error) })
     }

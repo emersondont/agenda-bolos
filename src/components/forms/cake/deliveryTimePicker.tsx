@@ -1,8 +1,8 @@
 import { Autocomplete, AutocompleteItem } from "@ui-kitten/components";
-import Label from "../../label";
+import Label from "../label";
 import { Control, Controller, FieldError } from "react-hook-form";
 import { CakeSchema } from "../../../types";
-import ErrorMessage from "./errorMessage";
+import ErrorMessage from "../errorMessage";
 
 interface Props extends React.ComponentProps<typeof Autocomplete> {
   control: Control<CakeSchema>

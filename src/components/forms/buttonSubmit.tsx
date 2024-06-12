@@ -24,8 +24,6 @@ const LoadingIndicatorError = (): React.ReactElement => (
 );
 
 export default function ButtonSubmit(props: Props) {
-  // const [progressStatus, setProgressStatus] = useState<progress>('default')
-
   const handleSubmit = async (event: GestureResponderEvent) => {
     props.setProgressStatus('loading')
     try {

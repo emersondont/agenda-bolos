@@ -1,6 +1,4 @@
-import { useEffect, useState } from "react";
 import { StyleSheet, ScrollView, Pressable } from "react-native";
-import { CakeType } from "../../types";
 import CakeCard from "../../components/cakeCard";
 import { Feather } from '@expo/vector-icons';
 import Layout from "../../components/layout";

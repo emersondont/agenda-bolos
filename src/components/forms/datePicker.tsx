@@ -1,24 +1,25 @@
 import { Datepicker } from "@ui-kitten/components";
-import Label from "../../label";
-import { localeDateService } from "../../calendar";
+import Label from "./label";
+import { localeDateService } from "../calendar";
 import { Control, Controller, FieldError } from "react-hook-form";
-import { CakeSchema } from "../../../types";
+import { CakeSchema } from "../../types";
 import ErrorMessage from "./errorMessage";
 
 interface Props extends React.ComponentProps<typeof Datepicker> {
   control: Control<CakeSchema>
   name: keyof CakeSchema
   error: FieldError | undefined
+  labelText: string
 }
 
-export default function DeliveryDatePicker(props: Props) {
+export default function DatePicker(props: Props) {
   return (
     <Controller
       control={props.control}
       name={props.name}
       render={({ field: { onChange,value } }) => (
         <Datepicker
-          label={evaProps => <Label {...evaProps} title="Data de entrega:" />}
+          label={evaProps => <Label {...evaProps} title={props.labelText + ':'} />}
           size="large"
           style={{
             flex: 1,

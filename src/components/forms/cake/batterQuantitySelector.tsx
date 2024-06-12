@@ -1,9 +1,9 @@
 import { IndexPath, Select, SelectItem } from "@ui-kitten/components";
-import Label from "../../label";
+import Label from "../label";
 import { Control, Controller, FieldError } from "react-hook-form";
 import { CakeSchema } from "../../../types";
 import { useState } from "react";
-import ErrorMessage from "./errorMessage";
+import ErrorMessage from "../errorMessage";
 
 interface Props extends React.ComponentProps<typeof Select> {
   control: Control<CakeSchema>
@@ -23,6 +23,7 @@ export default function BatterQuantitySelector(props: Props) {
     setSelectedIndex(index);
     return quantitys[index.row].name;
   }
+
   return (
     <Controller
       control={props.control}
@@ -30,7 +31,7 @@ export default function BatterQuantitySelector(props: Props) {
       render={({ field: { onChange, value } }) => (
         <Select
           label={evaProps => <Label {...evaProps} title="Quant. de massas:" />}
-          style={{ flex: 1, width: "100%", marginBottom: 12}}
+          style={{ flex: 1, width: "100%", marginBottom: 12 }}
           placeholder="Quantidade de massas:"
           size="large"
           value={value as string}

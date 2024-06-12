@@ -1,9 +1,9 @@
 import { IndexPath, Select, SelectItem } from "@ui-kitten/components";
-import Label from "../../label";
+import Label from "../label";
 import { Control, Controller, FieldError } from "react-hook-form";
 import { CakeSchema } from "../../../types";
 import { useState } from "react";
-import ErrorMessage from "./errorMessage";
+import ErrorMessage from "../errorMessage";
 
 interface Props extends React.ComponentProps<typeof Select> {
   control: Control<CakeSchema>
