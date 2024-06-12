@@ -1,29 +1,42 @@
 import React from 'react';
-import { Card, Text } from "@ui-kitten/components";
+import { Card, Text, Button } from "@ui-kitten/components";
 import { CakeType } from "../types";
 import { View, StyleSheet } from "react-native";
 import { Feather } from '@expo/vector-icons';
 import Animated, { FadeIn } from 'react-native-reanimated';
+import CakeModal from './modal/cakeModal';
 
 interface Props {
   cake: CakeType
 }
 
-export default function CakeCard(props: Props) {
+export default function CakeCard({ cake }: Props) {
+  const [visible, setVisible] = React.useState(false);
+
   return (
     <Animated.View entering={FadeIn.duration(200)}>
-      <Card style={{ marginBottom: 12 }} status='primary'>
-        <Text category='h5'>{props.cake.customer}</Text>
+      <Card
+        style={{ marginBottom: 12 }}
+        status='primary'
+        onPress={() => setVisible(true)}
+      >
+        <Text category='h5'>{cake.customer}</Text>
         <View style={styles.view}>
           <Text style={styles.price} category='s1'>
-            {props.cake.price.toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })}
+            {cake.price.toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })}
           </Text>
           <Text category='p2'>
             <Feather name="calendar" size={14} color='#666' />
-            {new Date(props.cake.deliveryDate).toLocaleDateString()}
+            {new Date(cake.deliveryDate).toLocaleDateString()}
           </Text>
         </View>
       </Card>
+
+      <CakeModal
+        cake={cake}
+        visible={visible}
+        setVisible={setVisible}
+      />
     </Animated.View>
   );
 }

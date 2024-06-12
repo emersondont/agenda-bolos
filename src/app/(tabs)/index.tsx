@@ -7,23 +7,14 @@ import Layout from "../../components/layout";
 import { Text } from "@ui-kitten/components";
 import { useCakeDatabase } from "../../database/useCakeDatabase";
 import { Link } from 'expo-router';
+import { useQuery } from "@tanstack/react-query";
 
 export default function Home() {
-  const [cakes, setCakes] = useState<CakeType[]>([]);
   const cakeDatabase = useCakeDatabase()
-
-  useEffect(() => {
-    const fetchCakes = async () => {
-      try {
-        const res = await cakeDatabase.all()
-        setCakes(res);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-
-    fetchCakes();
-  }, []);
+  const { data: cakes } = useQuery({
+    queryKey: ["cakes"],
+    queryFn: cakeDatabase.all
+  })
 
   return (
     <Layout>
@@ -33,7 +24,7 @@ export default function Home() {
         style={{ flex: 1, width: "100%" }}
         showsVerticalScrollIndicator={false}
       >
-        {cakes.map((cake) =>
+        {cakes && cakes.map((cake) =>
           <CakeCard key={cake.id} cake={cake} />
         )}
       </ScrollView>

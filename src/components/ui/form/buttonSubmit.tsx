@@ -2,15 +2,15 @@ import { Button, Spinner } from "@ui-kitten/components";
 import { GestureResponderEvent } from "react-native";
 import { Feather } from '@expo/vector-icons';
 import { MaterialIcons } from '@expo/vector-icons';
-import { FieldErrors, UseFormReset } from "react-hook-form";
+import { FieldErrors } from "react-hook-form";
 
-export type progress = 'loading' | 'success' | 'error' | 'default'
+export type Progress = 'loading' | 'success' | 'error' | 'default'
 
 interface Props extends React.ComponentProps<typeof Button> {
   handleSubmit: () => void
   errors: FieldErrors
-  progressStatus: progress
-  setProgressStatus: (status: progress) => void
+  progressStatus: Progress
+  setProgressStatus: (status: Progress) => void
 }
 
 const LoadingIndicator = (): React.ReactElement => (
@@ -28,17 +28,20 @@ export default function ButtonSubmit(props: Props) {
 
   const handleSubmit = async (event: GestureResponderEvent) => {
     props.setProgressStatus('loading')
-
-    await new Promise<void>(resolve => setTimeout(async () => {
-      await props.handleSubmit()
-      resolve()
-    }, 400))
+    try {
+      await new Promise<void>(resolve => setTimeout(async () => {
+        await props.handleSubmit()
+        resolve()
+      }, 400))
+    } catch(error) {
+      console.log('deu erro')
+    }
   }
 
   return (
     <Button
-      style={{
-        marginTop: 12,
+      style={{ 
+        marginVertical: 12,
         width: "100%"
       }}
       onPress={handleSubmit}

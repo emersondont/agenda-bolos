@@ -18,7 +18,7 @@ export default function CustomInput(props: Props) {
     <Controller
       control={props.control}
       name={props.name}
-      render={({ field: { onChange } }) => (
+      render={({ field: { onChange, value } }) => (
         <Input
           label={evaProps => <Label {...evaProps} title={props.title + ':'} />}
           style={{ width: "100%", marginBottom: 12}}
@@ -26,8 +26,10 @@ export default function CustomInput(props: Props) {
           size="large"
           onChangeText={onChange}
           blurOnSubmit={true}
+          value={value ? String(value) : ''}
           status={props.error ? 'danger' : 'basic'}
-          caption={evaProps => (props.error ? <ErrorMessage {...evaProps} message="Campo obrigatório!" /> : <></>)}          {...props}
+          caption={evaProps => (props.error ? <ErrorMessage {...evaProps} message="Campo obrigatório!" /> : <></>)}
+          {...props}
         />
       )}
     />

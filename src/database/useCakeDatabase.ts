@@ -17,7 +17,7 @@ export function useCakeDatabase() {
 
     try {
       const UUID = Crypto.randomUUID();
-      const result = await statement.executeAsync({
+      await statement.executeAsync({
         $id: UUID,
         $customer: cake.customer,
         $price: cake.price,
@@ -30,9 +30,7 @@ export function useCakeDatabase() {
         $description: description
       })
 
-      const id = result.lastInsertRowId.toString()
-
-      return { id }
+      return { id: UUID }
     } catch (error) {
       throw error
     } finally {
