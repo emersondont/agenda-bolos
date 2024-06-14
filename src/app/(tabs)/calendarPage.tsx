@@ -15,11 +15,12 @@ export default function CalendarPage() {
     queryKey: ["cakesMonth"],
     queryFn: () => cakeDatabase.getByMonth({ month: date.getMonth() + 1, year: date.getFullYear() }),
   });
+
   const { mutateAsync: updateArrayCakes } = useMutation({
     mutationFn: cakeDatabase.getByMonth,
     onSuccess(data, variables) {
       queryClient.setQueryData(["cakesMonth"], (cakes: CakeType[]) => {
-        return data
+        return cakes
       })
     }
   });
@@ -38,12 +39,15 @@ export default function CalendarPage() {
 
   return (
     <Layout>
-      <Calendar
-        date={date}
-        setDate={setDate}
-        fetchCakes={fetchCakes}
-        cakes={cakes}
-      />
+
+      {cakes &&
+        <Calendar
+          date={date}
+          setDate={setDate}
+          fetchCakes={fetchCakes}
+          cakes={cakes}
+        />
+      }
 
       <ScrollView
         style={{ flex: 1, width: "100%" }}

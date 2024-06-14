@@ -1,12 +1,11 @@
 import { StyleSheet, Text, View } from "react-native";
+import Layout from "../../components/layout";
 
 export default function Finances() {
   return (
-    <View style={styles.container}>
-      <View style={styles.main}>
+    <Layout>
         <Text style={styles.title}>Finanças</Text>
-      </View>
-    </View>
+    </Layout>
   );
 }
 
