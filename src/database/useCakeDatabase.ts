@@ -51,7 +51,7 @@ export function useCakeDatabase() {
       description = cake.description;
 
     try {
-      const result = await statement.executeAsync({
+      await statement.executeAsync({
         $id: cake.id,
         $customer: cake.customer,
         $price: cake.price,
@@ -64,7 +64,6 @@ export function useCakeDatabase() {
         $icing: cake.icing,
         $description: description
       });
-      console.log('changes: ', result.changes)
       return cake
     } catch (error) {
       throw error;

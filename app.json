@@ -19,7 +19,8 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.emersondont.agendabolos"
     },
     "web": {
       "favicon": "./assets/favicon.png",
@@ -27,6 +28,14 @@
     },
     "plugins": [
       "expo-router"
-    ]
+    ],
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "5c480d2a-623f-4fe6-97ba-5c558bf92c08"
+      }
+    }
   }
 }
