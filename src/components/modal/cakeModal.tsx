@@ -41,6 +41,7 @@ export default function CakeModal(props: Props) {
   const { mutateAsync: updateCakeFn } = useMutation({
     mutationFn: cakeDatabase.update,
     onSuccess(data, variables) {
+      
       queryClient.setQueryData(['cakes'], (cakes: CakeType[]) => {
         const deliveryDate = new Date(variables.deliveryDate);
         deliveryDate.setHours(0, 0, 0, 0);
@@ -60,17 +61,21 @@ export default function CakeModal(props: Props) {
         }
         return cakes
       })
-
+      
       queryClient.setQueryData(['cakesMonth'], (cakes: CakeType[]) => {
-        cakes = cakes.map(cake => {
-          if (cake.id === variables.id) {
-            return data
-          }
-          return cake
-        })
-
-        return cakes
+        if(cakes) {
+          cakes = cakes.map(cake => {
+            if (cake.id === variables.id) {
+              return data
+            }
+            return cake
+          })
+  
+          return cakes
+        }
+        return []
       })
+      
     }
   })
 
