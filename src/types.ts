@@ -15,6 +15,7 @@ export type CakeType = {
   batter: string;
   quantityFillings: number;
   quantityBatters: number;
+  icing: string; //Merengue, chantilly ou nata
   description?: string;
 };
 
@@ -28,6 +29,7 @@ export const cakeSchema = z.object({
   batter: z.string().min(1),
   // quantityFillings: z.coerce.number(),
   quantityBatters: z.coerce.number(),
+  icing: z.string().min(1),
   description: z.string().optional(),
 })
 export type CakeSchema = z.infer<typeof cakeSchema>

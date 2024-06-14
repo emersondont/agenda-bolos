@@ -29,10 +29,10 @@ export default function DeliveryTimePicker(props: Props) {
           label={evaProps => <Label {...evaProps} title="Hora de entrega:" />}
           placeholder="Hora de Entrega"
           size="large"
-          placement="inner top"
+          // placement="bott"
           style={{
             width: "100%",
-            marginBottom: 12
+            // marginBottom: 12,
           }}
           value={value as string}
           onSelect={index => onChange(onSelect(index))}

@@ -22,7 +22,9 @@ export default function CakeModal(props: Props) {
   const cakeDatabase = useCakeDatabase()
   const { control, handleSubmit, setError, reset, formState: { errors } } = useForm<CakeSchema>({
     resolver: zodResolver(cakeSchema),
-    defaultValues: props.cake
+    defaultValues: {...props.cake,
+      deliveryDate: new Date(props.cake.deliveryDate)
+    }
   })
   const queryClient = useQueryClient()
   const { mutateAsync: deleteCakeFn } = useMutation({
@@ -112,7 +114,6 @@ export default function CakeModal(props: Props) {
       backdropStyle={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}
       onBackdropPress={handleClose}
       animationType='fade'
-
     >
       <Card
         header={<Header

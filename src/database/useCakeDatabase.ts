@@ -7,8 +7,8 @@ export function useCakeDatabase() {
 
   async function create(cake: Omit<CakeType, "id">){
     const statement = await database.prepareAsync(`
-    INSERT INTO Cakes (id, customer, price, deliveryDate, deliveryHour, fillings, batter, quantityFillings, quantityBatters, description) 
-    VALUES ($id, $customer, $price, $deliveryDate, $deliveryHour, $fillings, $batter, $quantityFillings, $quantityBatters, $description);
+    INSERT INTO Cakes (id, customer, price, deliveryDate, deliveryHour, fillings, batter, quantityFillings, quantityBatters, icing, description) 
+    VALUES ($id, $customer, $price, $deliveryDate, $deliveryHour, $fillings, $batter, $quantityFillings, $quantityBatters, $icing, $description);
     `)
 
     var description = ''
@@ -27,6 +27,7 @@ export function useCakeDatabase() {
         $batter: cake.batter,
         $quantityFillings: cake.quantityFillings,
         $quantityBatters: cake.quantityBatters,
+        $icing: cake.icing,
         $description: description
       })
 
@@ -41,7 +42,7 @@ export function useCakeDatabase() {
   async function update(cake: CakeType){
     const statement = await database.prepareAsync(`
       UPDATE Cakes 
-      SET customer = $customer, price = $price, deliveryDate = $deliveryDate, deliveryHour = $deliveryHour, fillings = $fillings, batter = $batter, quantityFillings = $quantityFillings, quantityBatters = $quantityBatters, description = $description 
+      SET customer = $customer, price = $price, deliveryDate = $deliveryDate, deliveryHour = $deliveryHour, fillings = $fillings, batter = $batter, quantityFillings = $quantityFillings, quantityBatters = $quantityBatters, icing = $icing, description = $description 
       WHERE id = $id;
     `);
 
@@ -60,6 +61,7 @@ export function useCakeDatabase() {
         $batter: cake.batter,
         $quantityFillings: cake.quantityFillings,
         $quantityBatters: cake.quantityBatters,
+        $icing: cake.icing,
         $description: description
       });
       console.log('changes: ', result.changes)

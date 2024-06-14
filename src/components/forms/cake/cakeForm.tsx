@@ -8,6 +8,7 @@ import DeliveryTimePicker from "./deliveryTimePicker";
 import FillingsSelector from "./fillingsSelector";
 import BatterSelector from "./batterSelector";
 import BatterQuantitySelector from "./batterQuantitySelector";
+import IcingSelector from "./icingSelector";
 
 interface Props {
   control: Control<CakeSchema>
@@ -55,6 +56,13 @@ export default function CakeForm({ control, errors, disabled }: Props) {
         control={control}
         name="fillings"
         error={errors.fillings}
+        disabled={disabled}
+      />
+      
+      <IcingSelector
+        control={control}
+        name="icing"
+        error={errors.icing}
         disabled={disabled}
       />
 

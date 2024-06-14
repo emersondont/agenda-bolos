@@ -11,18 +11,18 @@ interface Props extends React.ComponentProps<typeof Select> {
   error: FieldError | undefined
 }
 
-const batters = [
-  { id: "1", name: "Mista" },
-  { id: "2", name: "Branca" },
-  { id: "3", name: "Preta" },
+const icings = [
+  { id: "1", name: "Merengue" },
+  { id: "2", name: "Chantilly" },
+  { id: "3", name: "Nata" },
 ];
 
-export default function BatterSelector(props: Props) {
+export default function IcingSelector(props: Props) {
   const [selectedIndex, setSelectedIndex] = useState<IndexPath | undefined>();
 
   const onSelect = (index: IndexPath) => {
     setSelectedIndex(index);
-    return batters[index.row].name;
+    return icings[index.row].name;
   }
 
   return (
@@ -31,9 +31,9 @@ export default function BatterSelector(props: Props) {
       name={props.name}
       render={({ field: { onChange, value } }) => (
         <Select
-          label={evaProps => <Label {...evaProps} title="Massas:" />}
+          label={evaProps => <Label {...evaProps} title="Cobertura:" />}
           style={{ flex: 1, width: "100%", marginBottom: 12}}
-          placeholder="Massas:"
+          placeholder="Cobertura:"
           size="large"
           value={value as string}
           selectedIndex={selectedIndex}
@@ -42,8 +42,8 @@ export default function BatterSelector(props: Props) {
           caption={evaProps => (props.error ? <ErrorMessage {...evaProps} message="Campo obrigatório!" /> : <></>)}          
           {...props}
         >
-          {batters.map((batter) => (
-            <SelectItem key={batter.id} title={batter.name} />
+          {icings.map((icing) => (
+            <SelectItem key={icing.id} title={icing.name} />
           ))}
         </Select>
       )}
