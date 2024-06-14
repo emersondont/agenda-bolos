@@ -8,19 +8,36 @@ import { useState } from "react";
 import { useCakeDatabase } from "../../database/useCakeDatabase";
 import CakeForm from "../../components/forms/cake/cakeForm";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useRouter } from 'expo-router';
 
 export default function NewCake() {
   const [progressStatus, setProgressStatus] = useState<Progress>('default')
-  const { control, handleSubmit, setError, reset, formState: { errors } } = useForm<CakeSchema>({
+  const router = useRouter()
+  const { control, handleSubmit, setError, formState: { errors } } = useForm<CakeSchema>({
     resolver: zodResolver(cakeSchema),
     defaultValues: {}
-  }) 
+  })
   const cakeDatabase = useCakeDatabase()
   const queryClient = useQueryClient()
   const { mutateAsync: createCakeFn } = useMutation({
     mutationFn: cakeDatabase.create,
     onSuccess(data, variables) {
-      queryClient.setQueryData(["cakes"], (cakes: CakeType[]) => {
+      const deliveryDate = new Date(variables.deliveryDate);
+      deliveryDate.setHours(0, 0, 0, 0);
+
+      const currentDate = new Date();
+      currentDate.setHours(0, 0, 0, 0);
+
+      //verifica se a data de entrega é maior ou igual a data atual
+      if (deliveryDate >= currentDate) {
+        queryClient.setQueryData(["cakes"], (cakes: CakeType[]) => {
+          return [...cakes, {
+            ...variables,
+            id: data.id
+          }]
+        })
+      }
+      queryClient.setQueryData(["cakesMonth"], (cakes: CakeType[]) => {
         return [...cakes, {
           ...variables,
           id: data.id
@@ -34,7 +51,9 @@ export default function NewCake() {
     try {
       await createCakeFn({ ...data, quantityFillings })
       setProgressStatus('success')
-      reset() 
+      setTimeout(() => {
+        router.push('/')
+      }, 400)
     } catch (error) {
       setError("root", { message: String(error) })
     }

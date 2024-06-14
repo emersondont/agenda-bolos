@@ -22,16 +22,16 @@ export default function CakeModal(props: Props) {
   const cakeDatabase = useCakeDatabase()
   const { control, handleSubmit, setError, reset, formState: { errors } } = useForm<CakeSchema>({
     resolver: zodResolver(cakeSchema),
-    defaultValues: {
-      ...props.cake,
-      deliveryDate: new Date(props.cake.deliveryDate),
-    }
+    defaultValues: props.cake
   })
   const queryClient = useQueryClient()
   const { mutateAsync: deleteCakeFn } = useMutation({
     mutationFn: cakeDatabase.remove,
     onSuccess(data, variables) {
-      queryClient.setQueryData(["cakes"], (cakes: CakeType[]) => {
+      queryClient.setQueryData(['cakes'], (cakes: CakeType[]) => {
+        return cakes.filter(cake => cake.id !== variables)
+      })
+      queryClient.setQueryData(['cakesMonth'], (cakes: CakeType[]) => {
         return cakes.filter(cake => cake.id !== variables)
       })
     }
@@ -39,13 +39,35 @@ export default function CakeModal(props: Props) {
   const { mutateAsync: updateCakeFn } = useMutation({
     mutationFn: cakeDatabase.update,
     onSuccess(data, variables) {
-      queryClient.setQueryData(["cakes"], (cakes: CakeType[]) => {
-        return cakes.map(cake => {
+      queryClient.setQueryData(['cakes'], (cakes: CakeType[]) => {
+        const deliveryDate = new Date(variables.deliveryDate);
+        deliveryDate.setHours(0, 0, 0, 0);
+
+        const currentDate = new Date();
+        currentDate.setHours(0, 0, 0, 0);
+        cakes = cakes.map(cake => {
           if (cake.id === variables.id) {
             return data
           }
           return cake
         })
+
+        //verifica se a data de entrega é maior ou igual a data atual
+        if (deliveryDate >= currentDate) {
+          cakes.filter(cake => cake.id !== variables.id)
+        }
+        return cakes
+      })
+
+      queryClient.setQueryData(['cakesMonth'], (cakes: CakeType[]) => {
+        cakes = cakes.map(cake => {
+          if (cake.id === variables.id) {
+            return data
+          }
+          return cake
+        })
+
+        return cakes
       })
     }
   })
@@ -64,6 +86,11 @@ export default function CakeModal(props: Props) {
     try {
       await updateCakeFn({ ...data, quantityFillings, id: props.cake.id })
       setProgressStatus('success')
+      setTimeout(() => {
+        props.setVisible(false)
+        setDisabled(true)
+        setProgressStatus('default')
+      }, 400)
     } catch (error) {
       setError("root", { message: String(error) })
     }
@@ -85,6 +112,7 @@ export default function CakeModal(props: Props) {
       backdropStyle={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}
       onBackdropPress={handleClose}
       animationType='fade'
+
     >
       <Card
         header={<Header

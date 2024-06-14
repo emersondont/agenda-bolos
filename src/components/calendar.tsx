@@ -33,7 +33,7 @@ interface Props {
   date: Date;
   setDate: (date: Date) => void;
   fetchCakes: (date: Date) => void;
-  cakes: CakeType[];
+  cakes: CakeType[] | undefined;
 }
 
 export default function Calendar_(props: Props) {
@@ -42,9 +42,12 @@ export default function Calendar_(props: Props) {
     info: CalendarDateInfo<Date>,
     style: StyleType
   ): React.ReactElement => {
-    const count = props.cakes.filter((cake) =>
-      String(cake.deliveryDate).split('T')[0] === info.date.toISOString().split('T')[0]
-    ).length;
+
+    const count = props.cakes ?
+      props.cakes.filter((cake) =>
+        new Date(cake.deliveryDate).toISOString().split('T')[0] === info.date.toISOString().split('T')[0]
+      ).length :
+      0
 
     return (
       <TouchableOpacity

@@ -5,25 +5,36 @@ import { CakeType } from "../../types";
 import { useCakeDatabase } from "../../database/useCakeDatabase";
 import { ScrollView } from "react-native";
 import CakeCard from "../../components/cakeCard";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 export default function CalendarPage() {
   const [date, setDate] = useState(new Date());
-  const [cakes, setCakes] = useState<CakeType[]>([]);
   const cakeDatabase = useCakeDatabase()
+  const queryClient = useQueryClient()
+  const { data: cakes } = useQuery({
+    queryKey: ["cakesMonth"],
+    queryFn: () => cakeDatabase.getByMonth({ month: date.getMonth() + 1, year: date.getFullYear() }),
+  });
+  const { mutateAsync: updateArrayCakes } = useMutation({
+    mutationFn: cakeDatabase.getByMonth,
+    onSuccess(data, variables) {
+      queryClient.setQueryData(["cakesMonth"], (cakes: CakeType[]) => {
+        return data
+      })
+    }
+  });
 
-  const fetchCakes = async (date: Date) => {
+  const fetchCakes = async (d: Date) => {
     setDate(date);
     try {
-      const res = await cakeDatabase.getByMonth(date.getMonth() + 1, date.getFullYear());
-      setCakes(res)
+      await updateArrayCakes({
+        month: d.getMonth() + 1,
+        year: d.getFullYear()
+      });
     } catch (error) {
       console.log(error);
     }
   };
-
-  useEffect(() => {
-    fetchCakes(date);
-  }, []);
 
   return (
     <Layout>
@@ -35,13 +46,13 @@ export default function CalendarPage() {
       />
 
       <ScrollView
-        style={{ flex: 1, width: "100%"}}
+        style={{ flex: 1, width: "100%" }}
         showsVerticalScrollIndicator={false}
       >
-        {cakes.map((cake) => 
-          String(cake.deliveryDate).split('T')[0] === date.toISOString().split('T')[0] &&
-            <CakeCard key={cake.id} cake={cake} />
-        )}
+        {cakes && cakes.map((cake) => {
+          return new Date(cake.deliveryDate).toISOString().split('T')[0] === date.toISOString().split('T')[0] &&
+            <CakeCard key={cake.id} cake={cake} />;
+        })}
       </ScrollView>
     </Layout>
   )

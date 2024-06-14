@@ -31,12 +31,15 @@ export default function CakeCard({ cake }: Props) {
           </Text>
         </View>
       </Card>
-
-      <CakeModal
-        cake={cake}
-        visible={visible}
-        setVisible={setVisible}
-      />
+      {
+        visible && (
+          <CakeModal
+            cake={cake}
+            visible={visible}
+            setVisible={setVisible}
+          />
+        )
+      }
     </Animated.View>
   );
 }

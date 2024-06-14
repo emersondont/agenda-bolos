@@ -3,6 +3,7 @@ import { Button } from "@ui-kitten/components";
 import { FieldErrors } from "react-hook-form";
 import { useState } from "react";
 import ButtonSubmit, { Progress } from "../forms/buttonSubmit";
+import ButtonDelete from "./buttonDelete";
 
 interface Props {
   setDisabled: (visible: boolean) => void;
@@ -29,13 +30,10 @@ export default function Footer(props: Props & ViewProps) {
     props.reset()
   }
 
-  const handleDelete = () => {
-    props.handleDelete()
-  }
-
   return (
     <View
-      style={styles.view}
+      {...props}
+      style={[props.style, styles.view]}
     >
       {
         isEditing ?
@@ -64,13 +62,9 @@ export default function Footer(props: Props & ViewProps) {
             >
               Editar
             </Button>
-            <Button
-              style={styles.button}
-              status='danger'
-              onPress={handleDelete}
-            >
-              Apagar
-            </Button>
+            <ButtonDelete
+              handleDelete={props.handleDelete}
+            />
           </>
       }
     </View>
@@ -82,8 +76,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flex: 1,
     gap: 6,
-    marginVertical: 12,
-    paddingHorizontal: 12
   },
   button: {
     flex: 1,

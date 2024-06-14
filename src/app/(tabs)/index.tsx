@@ -11,7 +11,7 @@ export default function Home() {
   const cakeDatabase = useCakeDatabase()
   const { data: cakes } = useQuery({
     queryKey: ["cakes"],
-    queryFn: cakeDatabase.all
+    queryFn: cakeDatabase.getUpcomingCakes
   })
 
   return (

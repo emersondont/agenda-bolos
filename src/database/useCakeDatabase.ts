@@ -50,11 +50,11 @@ export function useCakeDatabase() {
       description = cake.description;
 
     try {
-      await statement.executeAsync({
+      const result = await statement.executeAsync({
         $id: cake.id,
         $customer: cake.customer,
         $price: cake.price,
-        $deliveryDate: cake.deliveryDate.toDateString(),
+        $deliveryDate: cake.deliveryDate.toISOString(),
         $deliveryHour: cake.deliveryHour,
         $fillings: cake.fillings,
         $batter: cake.batter,
@@ -62,8 +62,8 @@ export function useCakeDatabase() {
         $quantityBatters: cake.quantityBatters,
         $description: description
       });
-
-      return cake;
+      console.log('changes: ', result.changes)
+      return cake
     } catch (error) {
       throw error;
     } finally {
@@ -80,8 +80,20 @@ export function useCakeDatabase() {
       throw error;
     }
   }
+  async function getUpcomingCakes() {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // set time to 00:00:00
+  
+    try {
+      const query = `SELECT * FROM Cakes WHERE deliveryDate >= ? ORDER BY deliveryDate;`;
+      const result = await database.getAllAsync<CakeType>(query, [today.toISOString()]);
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  }
 
-  async function getByMonth(month: number, year: number){
+  async function getByMonth({month, year} : {month: number, year: number}){
     const monthStr = `${year}-${month < 10 ? `0${month}` : month}`;
     try {
       const query = `SELECT * FROM Cakes WHERE strftime('%Y-%m', deliveryDate) = ?;`;
@@ -103,5 +115,5 @@ export function useCakeDatabase() {
     }
   }
 
-  return { create, update, all, getByMonth, remove}
+  return { create, update, all, getUpcomingCakes, getByMonth, remove}
 }
