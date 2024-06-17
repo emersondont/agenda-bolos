@@ -3,13 +3,13 @@ import {
 } from "@ui-kitten/components";
 import Label from "./label";
 import { Control, Controller, FieldError } from "react-hook-form";
-import { CakeSchema } from "../../types";
+import { CakeSchema, ExpenseSchema } from "../../types";
 import ErrorMessage from "./errorMessage";
 
 interface Props extends React.ComponentProps<typeof Input> {
   title: string,
-  control: Control<CakeSchema>
-  name: keyof CakeSchema
+  control: Control<any> //Control<CakeSchema> | Control<ExpenseSchema>
+  name: keyof CakeSchema | keyof ExpenseSchema
   error: FieldError | undefined
 }
 
@@ -21,7 +21,7 @@ export default function CustomInput(props: Props) {
       render={({ field: { onChange, value } }) => (
         <Input
           label={evaProps => <Label {...evaProps} title={props.title + ':'} />}
-          style={{ width: "100%", marginBottom: 12}}
+          style={{ flex: 1, width: "100%", marginBottom: 12 }}
           placeholder={props.title}
           size="large"
           onChangeText={onChange}
