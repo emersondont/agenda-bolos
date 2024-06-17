@@ -1,14 +1,15 @@
 import Calendar from "../../components/calendar";
 import Layout from "../../components/layout";
 import { useEffect, useState } from "react";
-import { CakeType } from "../../types";
 import { useCakeDatabase } from "../../database/useCakeDatabase";
 import { ScrollView } from "react-native";
 import CakeCard from "../../components/cakeCard";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import Animated, { FadeInUp } from 'react-native-reanimated';
 
 export default function CalendarPage() {
   const [date, setDate] = useState(new Date());
+  const [key, setKey] = useState(new Date().getTime());
   const cakeDatabase = useCakeDatabase()
   const queryClient = useQueryClient()
   const { data: cakes } = useQuery({
@@ -18,15 +19,14 @@ export default function CalendarPage() {
 
   const { mutateAsync: updateArrayCakes } = useMutation({
     mutationFn: cakeDatabase.getByMonth,
-    onSuccess(data, variables) {
-      queryClient.setQueryData(["cakesMonth"], (cakes: CakeType[]) => {
-        return cakes
+    onSuccess(data, _) {
+      queryClient.setQueryData(["cakesMonth"], () => {
+        return data
       })
     }
   });
-
   const fetchCakes = async (d: Date) => {
-    setDate(date);
+    setDate(d);
     try {
       await updateArrayCakes({
         month: d.getMonth() + 1,
@@ -37,17 +37,21 @@ export default function CalendarPage() {
     }
   };
 
+  useEffect(() => {
+    setKey(new Date().getTime()); // to force re-render
+  }, [cakes])
+
   return (
     <Layout>
-
-      {cakes &&
+      <Animated.View entering={FadeInUp.duration(400)}>
         <Calendar
           date={date}
           setDate={setDate}
           fetchCakes={fetchCakes}
           cakes={cakes}
+          key={key}
         />
-      }
+      </Animated.View>
 
       <ScrollView
         style={{ flex: 1, width: "100%" }}
@@ -58,6 +62,6 @@ export default function CalendarPage() {
             <CakeCard key={cake.id} cake={cake} />;
         })}
       </ScrollView>
-    </Layout>
+    </Layout >
   )
 }

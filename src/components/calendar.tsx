@@ -1,7 +1,6 @@
 import { StyleSheet, TouchableOpacity } from "react-native";
 import { Calendar, I18nConfig, NativeDateService, StyleType, Text } from "@ui-kitten/components";
 import { CalendarDateInfo } from "@ui-kitten/components/ui/calendar/type";
-import Animated, { FadeInUp } from 'react-native-reanimated';
 import { CakeType } from "../types";
 
 const i18n: I18nConfig = {
@@ -63,7 +62,6 @@ export default function Calendar_(props: Props) {
   }
 
   return (
-    <Animated.View entering={FadeInUp.duration(400)}>
       <Calendar
         dateService={localeDateService}
         date={props.date}
@@ -71,7 +69,6 @@ export default function Calendar_(props: Props) {
         onVisibleDateChange={props.fetchCakes}
         renderDay={renderDay}
       />
-    </Animated.View>
   );
 }
 

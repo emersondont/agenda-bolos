@@ -1,6 +1,4 @@
-import { StyleSheet, Text, View } from "react-native";
-import { ApplicationProvider } from "@ui-kitten/components";
-import * as eva from '@eva-design/eva';
+import { StyleSheet, View } from "react-native";
 
 interface Props {
   children: React.ReactNode;
@@ -8,11 +6,9 @@ interface Props {
 
 export default function Layout({ children }: Props) {
   return (
-    <ApplicationProvider {...eva} theme={eva.light} >
-      <View style={stylesLayout.container}>
-        {children}
-      </View>
-    </ApplicationProvider>
+    <View style={stylesLayout.container}>
+      {children}
+    </View>
   );
 }
 
