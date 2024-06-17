@@ -38,10 +38,12 @@ export default function NewCake() {
         })
       }
       queryClient.setQueryData(["cakesMonth"], (cakes: CakeType[]) => {
-        return [...cakes, {
-          ...variables,
-          id: data.id
-        }]
+        if(cakes) {
+          return [...cakes, {
+            ...variables,
+            id: data.id
+          }]
+        }
       })
     }
   })
