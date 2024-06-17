@@ -1,4 +1,4 @@
-import { IndexPath, Select, SelectItem } from "@ui-kitten/components";
+import { IndexPath, Select, SelectItem, Input } from "@ui-kitten/components";
 import Label from "../label";
 import { Control, Controller, FieldError } from "react-hook-form";
 import { CakeSchema, FillingType } from "../../../types";
@@ -10,6 +10,7 @@ interface Props extends React.ComponentProps<typeof Select> {
   control: Control<CakeSchema>
   name: keyof CakeSchema
   error: FieldError | undefined
+  disabled?: boolean
 }
 
 export default function FillingsSelector(props: Props) {
@@ -48,30 +49,53 @@ export default function FillingsSelector(props: Props) {
     }
   }
 
+  const renderInputMultiline = (value: string): React.ReactElement => {
+    return (
+      <Input
+        label={evaProps => <Label {...evaProps} title="Recheios:" />}
+        size="large"
+        multiline={true}
+        value={value}
+        disabled
+      />
+    )
+  }
+
+  const renderSelect = (value: string, onChange: (...event: any[]) => void): React.ReactElement => {
+    return (
+      <Select
+        label={evaProps => <Label {...evaProps} title="Recheios:" />}
+        style={{ width: "100%", marginBottom: 12 }}
+        placeholder="Recheios"
+        size="large"
+        multiSelect={true}
+        value={value}
+        selectedIndex={selectedIndex}
+        onSelect={(index) => onChange(onSelect(index as IndexPath[]))}
+        onFocus={() => setIndexThroughDefaultValue(value)}
+        status={props.error ? 'danger' : 'basic'}
+        caption={evaProps => (props.error ? <ErrorMessage {...evaProps} message="Campo obrigatório!" /> : <></>)}
+        {...props}
+      >
+        {fillings.map((filling) => (
+          <SelectItem key={filling.id} title={filling.name} />
+        ))}
+      </Select>
+    )
+  }
+
   return (
     <Controller
       control={props.control}
       name={props.name}
-      render={({ field: { onChange, value } }) => (
-        <Select
-          label={evaProps => <Label {...evaProps} title="Recheios:" />}
-          style={{ width: "100%", marginBottom: 12 }}
-          placeholder="Recheios"
-          size="large"
-          multiSelect={true}
-          value={value as string}
-          selectedIndex={selectedIndex}
-          onSelect={(index) => onChange(onSelect(index as IndexPath[]))}
-          onFocus={() => setIndexThroughDefaultValue(value as string)}
-          status={props.error ? 'danger' : 'basic'}
-          caption={evaProps => (props.error ? <ErrorMessage {...evaProps} message="Campo obrigatório!" /> : <></>)}
-          {...props}
-        >
-          {fillings.map((filling) => (
-            <SelectItem key={filling.id} title={filling.name} />
-          ))}
-        </Select>
-      )}
+      render={({ field: { onChange, value } }) => {
+        return (
+          props.disabled && value ?
+            renderInputMultiline(value as string)
+            :
+            renderSelect(value as string, onChange)
+        )
+      }}
     />
   )
 }
