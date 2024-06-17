@@ -12,12 +12,6 @@ interface Props extends React.ComponentProps<typeof Select> {
   error: FieldError | undefined
 }
 
-// const fillings = [
-//   { id: "1", name: "Chocolate" },
-//   { id: "2", name: "Nata" },
-//   { id: "3", name: "Filling 3" },
-// ];
-
 export default function FillingsSelector(props: Props) {
   const [selectedIndex, setSelectedIndex] = useState<IndexPath[]>([]);
   const [fillings, setFillings] = useState<FillingType[]>([]);
@@ -44,6 +38,16 @@ export default function FillingsSelector(props: Props) {
     fetchFillings();
   }, [])
 
+  const setIndexThroughDefaultValue = (value: string) => {
+    if (value) {
+      const selecteds = value.split('; ');
+      const indexes = selecteds.map((selected) => {
+        return new IndexPath(fillings.findIndex((filling) => filling.name === selected))
+      });
+      setSelectedIndex(indexes);
+    }
+  }
+
   return (
     <Controller
       control={props.control}
@@ -58,6 +62,7 @@ export default function FillingsSelector(props: Props) {
           value={value as string}
           selectedIndex={selectedIndex}
           onSelect={(index) => onChange(onSelect(index as IndexPath[]))}
+          onFocus={() => setIndexThroughDefaultValue(value as string)}
           status={props.error ? 'danger' : 'basic'}
           caption={evaProps => (props.error ? <ErrorMessage {...evaProps} message="Campo obrigatório!" /> : <></>)}
           {...props}
