@@ -22,7 +22,8 @@ export default function CakeModal(props: Props) {
   const cakeDatabase = useCakeDatabase()
   const { control, handleSubmit, setError, reset, formState: { errors } } = useForm<CakeSchema>({
     resolver: zodResolver(cakeSchema),
-    defaultValues: {...props.cake,
+    defaultValues: {
+      ...props.cake,
       deliveryDate: new Date(props.cake.deliveryDate)
     }
   })
@@ -41,7 +42,7 @@ export default function CakeModal(props: Props) {
   const { mutateAsync: updateCakeFn } = useMutation({
     mutationFn: cakeDatabase.update,
     onSuccess(data, variables) {
-      
+
       queryClient.setQueryData(['cakes'], (cakes: CakeType[]) => {
         const deliveryDate = new Date(variables.deliveryDate);
         deliveryDate.setHours(0, 0, 0, 0);
@@ -55,27 +56,40 @@ export default function CakeModal(props: Props) {
           return cake
         })
 
-        //verifica se a data de entrega é maior ou igual a data atual
-        if (deliveryDate >= currentDate) {
-          cakes.filter(cake => cake.id !== variables.id)
+        //verifica se o novo cake(data) esta na lista de cakes, e adicionar ele a lista de não estiver
+        if (!cakes.find(cake => cake.id === variables.id) && deliveryDate >= currentDate) {
+          cakes.push(data);
         }
+
+        // Ordenando a lista cakes pela deliveryDate
+        cakes.sort((a, b) => {
+          const dateA = new Date(a.deliveryDate);
+          const dateB = new Date(b.deliveryDate);
+          return dateA.getTime() - dateB.getTime();
+        })
+
+        //verifica se a data de entrega é maior ou igual a data atual
+        if (deliveryDate < currentDate) {
+          cakes = cakes.filter(cake => cake.id !== variables.id)
+        }
+        
         return cakes
       })
-      
+
       queryClient.setQueryData(['cakesMonth'], (cakes: CakeType[]) => {
-        if(cakes) {
+        if (cakes) {
           cakes = cakes.map(cake => {
             if (cake.id === variables.id) {
               return data
             }
             return cake
           })
-  
+
           return cakes
         }
         return []
       })
-      
+
     }
   })
 
