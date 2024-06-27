@@ -39,6 +39,7 @@ export default function TabRoutesLayout() {
         name='finances'
         options={{
           title: 'Finanças',
+          unmountOnBlur: true,
           tabBarIcon:({size, color}) => (
             <MaterialCommunityIcons name='finance' size={size} color={color} />
           )

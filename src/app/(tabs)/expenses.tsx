@@ -53,7 +53,7 @@ export default function Expenses() {
       })
     }
   })
-  const { mutateAsync: updateArrayCakes } = useMutation({
+  const { mutateAsync: updateArrayExpenses } = useMutation({
     mutationFn: expenseDatabase.getByMonth,
     onSuccess(data, _) {
       queryClient.setQueryData(["expenses"], () => {
@@ -82,7 +82,7 @@ export default function Expenses() {
   const handleChangeMonth = async (monthYear: MonthYear) => {
     setMonthYear(monthYear)
     try {
-      await updateArrayCakes({ year: monthYear.year, month: monthYear.month + 1 })
+      await updateArrayExpenses({ year: monthYear.year, month: monthYear.month + 1 })
     } catch (error) {
       console.log(error);
     }
@@ -90,7 +90,7 @@ export default function Expenses() {
 
   return (
     <Layout>
-      <View style={{ flexDirection: 'row', alignItems: "center", gap: 8, marginBottom: 12 }}>
+      <View style={{ flexDirection: 'row', alignItems: "center", gap: 8, marginBottom: 12, flexWrap: 'wrap' }}>
         <Text category="h4">Gastos do mês:</Text>
         <MonthPicker
           monthYear={monthYear}

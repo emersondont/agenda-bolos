@@ -19,7 +19,7 @@ export default function ExpenseCard({ expense }: Props) {
         onPress={() => setVisible(true)}
       >
         <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-          <View style={{ flexDirection: 'row', gap: 6, alignItems: 'center', width: '70%' }}>
+          <View style={{ flexDirection: 'row', gap: 6, alignItems: 'center', width: '65%' }}>
             <Text category='label' appearance="hint">
               {date.toISOString().slice(8, 10)}/{date.toISOString().slice(5, 7)}
             </Text>
@@ -30,7 +30,7 @@ export default function ExpenseCard({ expense }: Props) {
               {expense.quantity}
             </Text>
           </View>
-          <Text category='h6' status="danger">
+          <Text category='h6' style={{ color: "#dc3545" }}>
             {expense.price.toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })}
           </Text>
         </View>
