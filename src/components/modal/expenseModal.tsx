@@ -92,6 +92,7 @@ export default function ExpenseModal(props: Props) {
       backdropStyle={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}
       onBackdropPress={handleClose}
       animationType='fade'
+      style={{paddingHorizontal: 12}}
     >
       <Card
         header={<Header

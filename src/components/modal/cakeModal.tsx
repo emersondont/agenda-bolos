@@ -133,7 +133,7 @@ export default function CakeModal(props: Props) {
       backdropStyle={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}
       onBackdropPress={handleClose}
       animationType='fade'
-      style={{marginTop: 24}}
+      style={{marginTop: 24, paddingHorizontal: 12, maxHeight: '90%'}}
     >
       <Card
         header={<Header
@@ -149,6 +149,7 @@ export default function CakeModal(props: Props) {
           setProgressStatus={setProgressStatus}
           reset={reset}
         />}
+        style={{maxHeight: '100%'}}
       >
         <CakeForm control={control} errors={errors} disabled={disabled} />
       </Card>
