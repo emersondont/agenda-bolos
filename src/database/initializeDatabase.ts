@@ -31,4 +31,13 @@ export async function initializeDatabase(database: SQLiteDatabase) {
   INSERT INTO Fillings (id, name) VALUES ('8', 'Ganache') ON CONFLICT(id) DO NOTHING;
   `)
 
+  await database.execAsync(`
+    CREATE TABLE IF NOT EXISTS Expenses (
+      id TEXT PRIMARY KEY,
+      product TEXT,
+      price REAL,
+      quantity TEXT,
+      paymentDate TEXT
+    );
+    `)
 }

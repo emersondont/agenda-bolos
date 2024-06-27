@@ -19,11 +19,5 @@ export const stylesLayout = StyleSheet.create({
     paddingTop: 48,
     width: "100%",
     backgroundColor: "#fff",
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: "bold",
-    marginBottom: 12,
-    width: "100%",
   }
 });

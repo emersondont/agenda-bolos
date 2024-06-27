@@ -2,12 +2,12 @@ import { Datepicker } from "@ui-kitten/components";
 import Label from "./label";
 import { localeDateService } from "../calendar";
 import { Control, Controller, FieldError } from "react-hook-form";
-import { CakeSchema } from "../../types";
+import { CakeSchema, ExpenseSchema } from "../../types";
 import ErrorMessage from "./errorMessage";
 
 interface Props extends React.ComponentProps<typeof Datepicker> {
-  control: Control<CakeSchema>
-  name: keyof CakeSchema
+  control: Control<any> //Control<CakeSchema> | Control<ExpenseSchema>
+  name: keyof CakeSchema | keyof ExpenseSchema
   error: FieldError | undefined
   labelText: string
 }

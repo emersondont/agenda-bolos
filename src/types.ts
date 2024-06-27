@@ -33,3 +33,19 @@ export const cakeSchema = z.object({
   description: z.string().optional(),
 })
 export type CakeSchema = z.infer<typeof cakeSchema>
+
+export type ExpenseType = {
+  id: string;
+  product: string;
+  quantity: string;
+  price: number;
+  paymentDate: Date;
+}
+
+export const expenseSchema = z.object({
+  product: z.string().min(1),
+  quantity: z.string().min(1),
+  price: z.coerce.number().min(0.01),
+  paymentDate: z.coerce.date()
+})
+export type ExpenseSchema = z.infer<typeof expenseSchema>
