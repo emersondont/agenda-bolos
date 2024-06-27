@@ -133,6 +133,7 @@ export default function CakeModal(props: Props) {
       backdropStyle={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}
       onBackdropPress={handleClose}
       animationType='fade'
+      style={{marginTop: 24}}
     >
       <Card
         header={<Header
